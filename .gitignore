@@ -1,0 +1,13 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
+# App
+app/node_modules/
+app/release/
+
+# Hand labels, frame embeddings and notes about real VODs
+local/

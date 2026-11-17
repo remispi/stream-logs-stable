@@ -1,0 +1,19 @@
+{
+  "name": "stream-log",
+  "productName": "Stream Log",
+  "version": "0.1.0",
+  "description": "A timestamped list of what happened in a stream VOD",
+  "private": true,
+  "license": "MIT",
+  "main": "electron/main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "screenshot": "electron . --screenshot",
+    "installer": "node scripts/package.mjs",
+    "icon": "python scripts/make_icon.py"
+  },
+  "devDependencies": {
+    "electron": "45.2.3",
+    "electron-builder": "26.18.0"
+  }
+}

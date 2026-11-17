@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stream Log</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <svg class="mark" viewBox="0 0 256 256" aria-hidden="true"><rect width="256" height="256" rx="48"/><rect x="48" y="62" width="36" height="26"/><rect x="100" y="62" width="120" height="26"/><rect x="48" y="112" width="36" height="26"/><rect x="100" y="112" width="88" height="26"/><rect x="48" y="162" width="36" height="26"/><rect x="100" y="162" width="104" height="26"/></svg>
+      <h1>Stream Log</h1>
+    </div>
+    <button id="open-settings" class="ghost" type="button">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+      Settings
+    </button>
+  </header>
+
+  <main>
+    <section id="setup" class="card notice" hidden>
+      <div>
+        <h2>First-time setup</h2>
+        <p id="setup-text"></p>
+      </div>
+      <button id="run-setup" type="button" class="primary">Download</button>
+    </section>
+
+    <section class="card" id="source">
+      <div class="tabs" role="tablist">
+        <button role="tab" id="tab-twitch" aria-selected="true" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3h17v11l-5 5h-4l-3 3H7v-3H3V6l1-3Zm3 2v11h3v2l2-2h4l3-3V5H7Zm5 3h2v5h-2V8Zm4 0h2v5h-2V8Z"/></svg>
+          From a Twitch account
+        </button>
+        <button role="tab" id="tab-file" aria-selected="false" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h10l6 6v10H4V4Zm9 1.5V11h5.5L13 5.5ZM9 13v5l4-2.5L9 13Z"/></svg>
+          A video I already have
+        </button>
+      </div>
+
+      <div id="panel-twitch" role="tabpanel">
+        <form id="find-form" class="row">
+          <label for="account">Twitch account</label>
+          <input id="account" autocomplete="off" spellcheck="false" placeholder="channel name">
+          <button type="submit" id="find">Find VODs</button>
+        </form>
+        <p id="vods-status" class="muted"></p>
+        <div id="vods" class="vods" role="radiogroup" aria-label="VODs"></div>
+        <div id="save-as" class="save-as" hidden>
+          <label for="stem">Save as</label>
+          <div class="stem"><input id="stem" spellcheck="false"><span>.mp4</span></div>
+          <p class="muted">in <span id="raw-folder"></span>
+            <button id="change-raw" class="link" type="button">Change</button></p>
+          <p id="already" class="muted" hidden>A file with this name is already there: it's used
+            if it's this VOD, otherwise this one is saved with a number after the name.</p>
+          <p id="have-it" hidden>You may already have this VOD: <span id="have-name"></span>
+            <button id="use-it" class="link" type="button">Use that file instead</button></p>
+        </div>
+      </div>
+
+      <div id="panel-file" role="tabpanel" hidden>
+        <div class="row">
+          <button id="choose-video" type="button">Choose a video…</button>
+          <span id="video-path" class="path muted">No video chosen</span>
+        </div>
+        <label for="match">Its Twitch VOD (optional: adds chat and links to Twitch)</label>
+        <select id="match"><option value="">None</option></select>
+        <input id="match-url" spellcheck="false" placeholder="or paste a Twitch VOD link">
+      </div>
+
+      <div class="actions">
+        <button id="make" class="primary" type="button" disabled>Make the list</button>
+        <span id="make-hint" class="muted"></span>
+      </div>
+    </section>
+
+    <section id="progress" class="card" hidden>
+      <div class="progress-head">
+        <h2 id="progress-title">Working</h2>
+        <span id="elapsed" class="muted"></span>
+        <button id="stop" type="button">Stop</button>
+      </div>
+      <div class="bar"><div id="bar-fill"></div></div>
+      <p id="step-text" class="muted"></p>
+      <ol id="steps" class="steps"></ol>
+      <details><summary>Details</summary><pre id="log"></pre>
+        <button id="open-log" class="link" type="button">Open the full log</button></details>
+    </section>
+
+    <section id="done" class="card" hidden>
+      <h2 id="done-title">The list is ready</h2>
+      <p id="done-text" class="muted"></p>
+      <div class="actions">
+        <button id="open-html" class="primary" type="button">Open the list</button>
+        <button id="open-txt" type="button">Open as text</button>
+        <button id="show-folder" type="button">Show in folder</button>
+      </div>
+      <div class="sync">
+        <p>Streamed together with someone? Line this VOD up with theirs (a video already turned into
+          a list here) and each list shows the other's time next to every moment.</p>
+        <button id="sync" type="button">Line up with another VOD…</button>
+        <p id="sync-note" class="muted"></p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settings">
+    <form method="dialog">
+      <h2>Settings</h2>
+      <label for="set-raw">Folder for downloaded VODs</label>
+      <div class="row"><input id="set-raw" spellcheck="false">
+        <button id="pick-raw" type="button">Browse…</button></div>
+      <label for="set-home">Data folder (models and analysis, several GB)</label>
+      <div class="row"><input id="set-home" spellcheck="false">
+        <button id="pick-home" type="button">Browse…</button></div>
+      <label for="set-mode">Quality of the topic descriptions (local LLMs)</label>
+      <select id="set-mode"></select>
+      <label class="check"><input id="set-games" type="checkbox"> Find TFT games
+        <span class="muted">(off: the list follows topics only, for streams without TFT)</span></label>
+      <label for="set-per-hour">Lines per hour of stream</label>
+      <input id="set-per-hour" type="number" min="4" max="40">
+      <label for="set-profile">Streamer voice (a profile in the data folder)</label>
+      <select id="set-profile"></select>
+      <label for="set-theme">Look</label>
+      <select id="set-theme">
+        <option value="">Like Windows</option><option value="dark">Dark</option>
+        <option value="light">Light</option>
+      </select>
+      <div class="actions">
+        <button value="save" class="primary">Save</button>
+        <button value="cancel" formnovalidate>Cancel</button>
+      </div>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>

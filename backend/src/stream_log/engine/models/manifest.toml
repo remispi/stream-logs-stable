@@ -1,0 +1,394 @@
+# Every model the app may download or run.
+#
+# source:            "hf:<repo>", "pypi:<package>", "github:<owner/repo>", "bundled:<package>",
+#                    or "" when the exact repo/file is not chosen yet.
+# license_verified:  false until someone has read the licence on the model card.
+#                    Check a model card before relying on it.
+# commercial_ok:     only matters if the app is ever sold.
+# phase:             required by the format; not used to choose models.
+
+# ---------------------------------------------------------------- speech recognition
+
+[[model]]
+id = "whisper-tiny-en"
+kind = "asr"
+runtime = "ctranslate2"
+source = "hf:Systran/faster-whisper-tiny.en"
+size_gb = 0.08
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 0
+purpose = "GPU smoke test only"
+
+[[model]]
+id = "whisper-large-v3-turbo"
+kind = "asr"
+runtime = "ctranslate2"
+source = "hf:mobiuslabsgmbh/faster-whisper-large-v3-turbo"
+size_gb = 1.6
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 1
+purpose = "Main transcription model"
+
+[[model]]
+id = "distil-large-v3.5"
+kind = "asr"
+runtime = "ctranslate2"
+source = "hf:distil-whisper/distil-large-v3.5-ct2"
+size_gb = 1.5
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 1
+purpose = "Faster English-only alternative, compared on the eval set"
+
+[[model]]
+id = "crisperwhisper"
+kind = "asr"
+runtime = "ctranslate2"
+source = "hf:nyrahealth/faster_CrisperWhisper"
+size_gb = 3.1
+license = "CC-BY-NC-4.0"
+license_verified = false
+commercial_ok = false
+phase = 1
+purpose = "Verbatim transcription that keeps fillers (um, uh, false starts)"
+
+[[model]]
+id = "wav2vec2-base-960h"
+kind = "align"
+runtime = "onnx"
+source = "hf:onnx-community/wav2vec2-base-960h-ONNX"
+files = ["onnx/model.onnx", "vocab.json", "config.json", "preprocessor_config.json"]
+size_gb = 0.38
+license = "Apache-2.0"
+license_verified = false
+commercial_ok = true
+phase = 1
+purpose = "CTC forced alignment of word boundaries (WhisperX-style)"
+
+[[model]]
+id = "silero-vad"
+kind = "vad"
+runtime = "onnx"
+source = "bundled:faster-whisper"
+size_gb = 0.002
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 1
+purpose = "Voice activity detection"
+
+# ---------------------------------------------------------------- speakers & audio
+
+[[model]]
+id = "wespeaker-resnet34"
+kind = "speaker"
+runtime = "onnx"
+source = "hf:Wespeaker/wespeaker-voxceleb-resnet34-LM"
+files = ["*.onnx", "config.yaml", "README.md"]
+size_gb = 0.03
+license = "CC-BY-4.0"
+license_verified = false
+commercial_ok = true
+phase = 1
+purpose = "Speaker embeddings for voice enrollment and speaker tags (Kaldi fbank input)"
+
+[[model]]
+id = "pyannote-diarization"
+kind = "speaker"
+runtime = "torch"
+source = ""
+size_gb = 0.1
+license = "gated on Hugging Face — verify"
+license_verified = false
+commercial_ok = false
+phase = 1
+purpose = "Optional better diarization for guests"
+
+[[model]]
+id = "emotion2vec-plus"
+kind = "audio-emotion"
+runtime = "onnx"
+source = "hf:emotion2vec/emotion2vec_plus_base"
+size_gb = 0.4
+license = "verify"
+license_verified = false
+commercial_ok = false
+phase = 2
+purpose = "Voice emotion of the streamer"
+
+[[model]]
+id = "audio-events"
+kind = "audio-events"
+runtime = "onnx"
+source = "hf:onnx-community/ast-finetuned-audioset-10-10-0.4593-ONNX"
+files = ["onnx/model.onnx", "config.json", "preprocessor_config.json"]
+size_gb = 0.35
+license = "BSD-3-Clause (AST) — verify"
+license_verified = false
+commercial_ok = true
+phase = 2
+purpose = "Laughter, screams, cheering, music detection (AST, AudioSet 527 classes)"
+
+[[model]]
+id = "deepfilternet"
+kind = "denoise"
+runtime = "onnx"
+source = "github:Rikorose/DeepFilterNet"
+size_gb = 0.01
+license = "MIT OR Apache-2.0"
+license_verified = false
+commercial_ok = true
+phase = 2
+purpose = "Denoise IRL audio before analysis"
+
+[[model]]
+id = "demucs"
+kind = "separation"
+runtime = "torch"
+source = "pypi:demucs"
+size_gb = 0.3
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 2
+purpose = "Optional voice / game-audio separation on candidate regions"
+
+# ---------------------------------------------------------------- text & chat
+
+[[model]]
+id = "go-emotions"
+kind = "text-emotion"
+runtime = "onnx"
+source = "hf:SamLowe/roberta-base-go_emotions-onnx"
+files = ["onnx/model_quantized.onnx", "onnx/tokenizer.json", "onnx/config.json", "config.json"]
+size_gb = 0.13
+license = "MIT"
+license_verified = false
+commercial_ok = false
+phase = 2
+purpose = "Emotion labels for chat messages"
+
+[[model]]
+id = "bge-small-en"
+kind = "text-embedding"
+runtime = "onnx"
+source = "hf:BAAI/bge-small-en-v1.5"
+files = ["onnx/model.onnx", "tokenizer.json", "config.json"]
+size_gb = 0.13
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 2
+purpose = "Chat convergence, vibe prototypes, topic segmentation"
+
+# ---------------------------------------------------------------- vision
+
+[[model]]
+id = "siglip-base"
+kind = "vision-text"
+runtime = "onnx"
+source = "hf:Xenova/siglip-base-patch16-224"
+files = ["onnx/vision_model.onnx", "onnx/text_model.onnx", "tokenizer.json", "config.json", "preprocessor_config.json"]
+size_gb = 0.8
+license = "Apache-2.0"
+license_verified = false
+commercial_ok = true
+phase = 2
+purpose = "Stream-mode detection, game events, custom visual events"
+
+[[model]]
+id = "rapidocr"
+kind = "ocr"
+runtime = "onnx"
+source = "pypi:rapidocr"
+size_gb = 0.02
+license = "Apache-2.0"
+license_verified = false
+commercial_ok = true
+phase = 2
+purpose = "Large on-screen text (YOU DIED, VICTORY)"
+
+[[model]]
+id = "yunet"
+kind = "face"
+runtime = "onnx"
+source = "hf:opencv/face_detection_yunet"
+files = ["face_detection_yunet_2023mar.onnx", "LICENSE", "yunet.py"]
+size_gb = 0.001
+license = "MIT"
+license_verified = false
+commercial_ok = true
+phase = 4
+purpose = "Face detection for reframing and facecam auto-detect"
+
+# ---------------------------------------------------------------- LLMs (GGUF, llama.cpp)
+# GGUF repos and sizes checked on Hugging Face 2026-11-01; licence = the official repo's licence
+# tag. Vision-capable models also fetch their F16 vision projector (mmproj) for frame judging.
+# Too big for the high tier (checked): Qwen3.8-Flash-Next (180B), DeepSeek-V4.1-Flash (763B).
+# train_base: the full-precision repo a LoRA is trained on (Tools > Training > Fine-tune). Only
+# the dense 12-14B models have one: in 4-bit, 27B and the MoE models don't leave room to train
+# on a 16 GB GPU.
+
+[[model]]
+id = "qwen3.8-27b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:unsloth/Qwen3.8-27B-GGUF"
+files = ["Qwen3.8-27B-UD-IQ4_XS.gguf", "mmproj-F16.gguf"]
+size_gb = 15.3
+license = "Apache-2.0"
+license_verified = true
+commercial_ok = true
+phase = 2
+purpose = "Newest dense Qwen (Aug 2026), a strong proposer; IQ4_XS needs nearly all of a 16 GB GPU free to stay fast, so it is not a default; vision"
+
+[[model]]
+id = "qwen3.6-35b-a3b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:unsloth/Qwen3.6-35B-A3B-GGUF"
+files = ["Qwen3.6-35B-A3B-UD-Q4_K_XL.gguf", "mmproj-F16.gguf"]
+# For this MoE model, keep the full model layers on the GPU and offload some experts to system RAM.
+serve = { n_cpu_moe = 16 }
+size_gb = 23.2
+license = "Apache-2.0"
+license_verified = true
+commercial_ok = true
+phase = 2
+purpose = "Fast MoE proposer (3B active), experts partly in system RAM; vision"
+
+[[model]]
+id = "gemma4-26b-a4b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:unsloth/gemma-4-26B-A4B-it-GGUF"
+files = ["gemma-4-26B-A4B-it-UD-Q4_K_XL.gguf", "mmproj-F16.gguf"]
+size_gb = 18.0
+license = "Apache-2.0"
+license_verified = true
+commercial_ok = true
+phase = 3
+purpose = "Second model family for the ensemble (MoE, 4B active); vision"
+
+[[model]]
+id = "gpt-oss-20b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:ggml-org/gpt-oss-20b-GGUF"
+files = ["gpt-oss-20b-MXFP4.gguf"]
+size_gb = 12.1
+license = "Apache-2.0"
+license_verified = true
+commercial_ok = true
+phase = 3
+purpose = "Third model family (OpenAI, MoE 3.6B active), reasoning-focused judge; fits fully in VRAM"
+
+[[model]]
+id = "gemma4-12b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:unsloth/gemma-4-12b-it-GGUF"
+files = ["gemma-4-12b-it-UD-Q4_K_XL.gguf", "mmproj-F16.gguf"]
+# Full bf16 weights (23.9 GB, ungated mirror) for LoRA fine-tuning in the app (QLoRA fits 16 GB).
+train_base = "unsloth/gemma-4-12b-it"
+size_gb = 8.3
+license = "Apache-2.0"
+license_verified = true
+commercial_ok = true
+phase = 2
+purpose = "Fits fully in 16 GB VRAM with room for context; default on mid/low tiers; fast judge"
+
+[[model]]
+id = "nemotron3.5-bolt-74b-a9b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:nvidia/NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB-GGUF"
+files = ["NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf", "mmproj-NVIDIA-Nemotron-3.5-Bolt-74B-A9B-24GB.gguf"]
+# This video-capable model needs about 24 GB of VRAM or unified memory; with its experts in
+# system RAM on a 16 GB GPU it runs too slowly to use. No tier's ensemble includes it.
+size_gb = 23.8
+license = "OpenMDW-1.1"
+license_verified = true
+commercial_ok = true
+phase = 3
+purpose = "Video-capable judge (mp4 up to 2 min); needs ~24 GB VRAM, unusable on the high tier"
+
+[[model]]
+id = "ministral3-14b"
+kind = "llm"
+runtime = "llama.cpp"
+source = "hf:unsloth/Ministral-3-14B-Instruct-2512-GGUF"
+files = ["Ministral-3-14B-Instruct-2512-UD-Q4_K_XL.gguf", "mmproj-F16.gguf"]
+# bf16 weights (27.9 GB); Mistral's own repo is FP8, which bitsandbytes can't train on.
+train_base = "unsloth/Ministral-3-14B-Instruct-2512"
+size_gb = 9.2
+license = "Apache-2.0"
+license_verified = true
+commercial_ok = true
+phase = 3
+purpose = "Fourth model family (Mistral) for the judge panel; fits fully in VRAM; vision"
+
+[[model]]
+id = "gemma4-e4b"
+kind = "llm"
+runtime = "llama.cpp"
+source = ""
+size_gb = 3.0
+license = "Apache-2.0 (reported)"
+license_verified = false
+commercial_ok = true
+phase = 8
+purpose = "CPU tier"
+
+# ---------------------------------------------------------------- tier presets
+
+[tiers.high]
+asr = "whisper-large-v3-turbo"
+verbatim_asr = "crisperwhisper"
+# Gemma 4 26B gave the most useful, best-grounded events in evaluation; Qwen3.8-27B is only fast
+# with nearly all of a 16 GB GPU free, so it is not the default.
+llm_default = "gemma4-26b-a4b"
+llm_ensemble = ["gemma4-26b-a4b", "gpt-oss-20b", "qwen3.6-35b-a3b", "gemma4-12b", "qwen3.8-27b"]
+modes = ["fast", "balanced", "best"]
+default_mode = "best"
+
+# Roles per mode, based on model benchmarks and evaluation runs. Fast uses a smaller model;
+# Balanced and Best add model diversity for quality. Keep tuning against held-out clips and
+# compare results with a random-order baseline.
+[tiers.high.roles.fast]
+events = ["gemma4-12b"]
+
+[tiers.high.roles.balanced]
+events = ["gemma4-26b-a4b"]
+
+# Three model families that check each other's events: the slowest mode, with every LLM stage
+# run by three models in turn.
+[tiers.high.roles.best]
+events = ["gemma4-26b-a4b", "gpt-oss-20b", "qwen3.6-35b-a3b"]
+
+[tiers.mid]
+asr = "whisper-large-v3-turbo"
+verbatim_asr = "crisperwhisper"
+llm_default = "gemma4-12b"
+llm_ensemble = ["gemma4-12b", "gpt-oss-20b", "qwen3.6-35b-a3b"]
+modes = ["fast", "balanced"]
+default_mode = "balanced"
+
+[tiers.low]
+asr = "whisper-large-v3-turbo"
+verbatim_asr = "crisperwhisper"
+llm_default = "gemma4-12b"
+llm_ensemble = ["gemma4-12b"]
+modes = ["fast"]
+
+[tiers.cpu]
+asr = "distil-large-v3.5"
+verbatim_asr = "crisperwhisper"
+llm_default = "gemma4-e4b"
+llm_ensemble = ["gemma4-e4b"]
+modes = ["fast"]
